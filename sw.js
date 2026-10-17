@@ -1,5 +1,5 @@
 // Caches the app so it works offline after the first visit.
-const V = 'mix-meadow-v2';
+const V = 'mix-meadow-v1';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));

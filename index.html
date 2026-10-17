@@ -132,7 +132,7 @@ const SOUNDS=[
  {id:'tick',nm:'Tick',pack:'Beats',c:'#ffd93d',hat:'bucket',eye:'sleepy',p:P('x.x.x.x.x.x.x.x.'),fn:(t,s)=>noise(t,.05,s%4===2?.45:.3,'highpass',7500)},
  {id:'clap',nm:'Clap',pack:'Beats',c:'#d9d9de',hat:'none',eye:'flat',p:P('....x..x....x...'),fn:(t)=>{for(let i=0;i<3;i++)noise(t+i*.012,.1,.5,'bandpass',1200,1.2)}},
  {id:'wub',nm:'Wub',pack:'Bass',c:'#b8683a',hat:'bucket',eye:'wide',p:P('x..x..x...x.x...'),notes:[0,0,0,-2,0,0,3,-2],fn:(t,s,n)=>osc('sawtooth',hz(n,55),t,.32,.5,{filter:{t:'lowpass',f:380,q:6}})},
- {id:'sub',nm:'Sub',pack:'Bass',c:'#3b82f6',hat:'hood',eye:'sleepy',bar:1,p:P('x.......x.......'),notes:[0,-4,3,-2],fn:(t,s,n)=>osc('sine',hz(n,55),t,.9,.9)},
+ {id:'sub',nm:'Sub',pack:'Bass',c:'#3b82f6',hat:'hood',eye:'sleepy',bar:1,p:P('x.......x.......'),notes:[0,-4,3,-2],fn:(t,s,n)=>{const f=hz(n,55);osc('sine',f,t,.9,.9);osc('triangle',f*2,t,.7,.35);osc('sine',f*3,t,.5,.12)}},
  {id:'pluck',nm:'Pluck',pack:'Tunes',c:'#4cc9f0',hat:'prop',eye:'wide',p:P('x.x..x.x..x.x...'),notes:[12,15,17,15,19,17,15,12],fn:(t,s,n)=>osc('triangle',hz(n),t,.3,.55,{filter:{t:'lowpass',f:2600}})},
  {id:'pad',nm:'Pad',pack:'Tunes',c:'#a56cff',hat:'horns',eye:'sleepy',bar:1,p:P('x...............'),notes:[0,-4,3,-2],fn:(t,s,r)=>tri(r).forEach(k=>osc('sawtooth',hz(r+k,110),t,2,.12,{a:.3,filter:{t:'lowpass',f:1100}}))},
  {id:'bell',nm:'Bell',pack:'Tunes',c:'#b6f24a',hat:'crown',eye:'wide',p:P('..x...x...x..x..'),notes:[24,22,19,24,26],fn:(t,s,n)=>{osc('sine',hz(n),t,.8,.4);osc('sine',hz(n)*2.76,t,.4,.12)}},
@@ -153,9 +153,17 @@ const SOUNDS=[
  {id:'lead',nm:'Synth',pack:'Tunes',c:'#6366f1',hat:'phones',eye:'wide',p:P('x.xx..x.x..xx...'),notes:[24,22,19,22,17,19,15,12],fn:(t,s,n)=>[0,.006].forEach(dt=>osc('sawtooth',hz(n)*(1+dt),t,.22,.14,{filter:{t:'lowpass',f:2800,q:3}}))},
  {id:'harp',nm:'Harp',pack:'Tunes',c:'#fde68a',hat:'bow',eye:'sleepy',p:P('x.......x.......'),fn:(t)=>[0,3,5,7,10,12,15,17].forEach((k,i)=>osc('triangle',hz(k+12),t+i*.05,.5,.22-i*.012,{filter:{t:'lowpass',f:3200}}))},
  {id:'cowbell',nm:'Cowbell',pack:'Beats',c:'#facc15',hat:'spikes',eye:'flat',p:P('..x...x...x...x.'),fn:(t)=>[540,800].forEach(f=>osc('square',f,t,.18,.13,{filter:{t:'bandpass',f:700,q:2}}))},
- {id:'808',nm:'808',pack:'Beats',c:'#92400e',hat:'horns',eye:'sleepy',p:P('x.....x..x......'),notes:[0,0,-4,-2],fn:(t,s,n)=>osc('sine',hz(n,55),t,.7,1,{sweep:hz(n,55)*.9})},
+ {id:'808',nm:'808',pack:'Beats',c:'#92400e',hat:'horns',eye:'sleepy',p:P('x.....x..x......'),notes:[0,0,-4,-2],fn:(t,s,n)=>{const f=hz(n,55);osc('sine',f,t,.8,1,{sweep:f*.9});osc('triangle',f*2,t,.5,.7,{sweep:f*1.8});osc('sine',f*3,t,.35,.45);osc('sawtooth',f*4,t,.25,.14,{filter:{t:'lowpass',f:900}});noise(t,.02,.35,'lowpass',2000)}},
  {id:'scratch',nm:'Scratch',pack:'FX',c:'#475569',hat:'hood',eye:'flat',p:P('......x.....x.x.'),fn:(t)=>{noise(t,.18,.35,'bandpass',2200,3);osc('sawtooth',300,t,.18,.2,{sweep:1100,filter:{t:'bandpass',f:1500,q:2}})}},
- {id:'whoosh',nm:'Whoosh',pack:'FX',c:'#bae6fd',hat:'antenna',eye:'wide',p:P('x...............'),fn:(t)=>{const b=ctx.createBufferSource();b.buffer=noiseBuf;b.loop=true;const f=ctx.createBiquadFilter();f.type='bandpass';f.Q.value=2;f.frequency.setValueAtTime(300,t);f.frequency.exponentialRampToValueAtTime(5000,t+1.2);const g=ctx.createGain();g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.45,t+1.1);g.gain.linearRampToValueAtTime(.0001,t+1.35);b.connect(f);f.connect(g);g.connect(master);b.start(t);b.stop(t+1.4)}}
+ {id:'whoosh',nm:'Whoosh',pack:'FX',c:'#bae6fd',hat:'antenna',eye:'wide',p:P('x...............'),fn:(t)=>{const b=ctx.createBufferSource();b.buffer=noiseBuf;b.loop=true;const f=ctx.createBiquadFilter();f.type='bandpass';f.Q.value=2;f.frequency.setValueAtTime(300,t);f.frequency.exponentialRampToValueAtTime(5000,t+1.2);const g=ctx.createGain();g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.45,t+1.1);g.gain.linearRampToValueAtTime(.0001,t+1.35);b.connect(f);f.connect(g);g.connect(master);b.start(t);b.stop(t+1.4)}},
+ {id:'boom',nm:'Boom',pack:'Beats',c:'#ea580c',hat:'beanie',eye:'flat',p:P('x...x...x...x...'),fn:(t)=>{osc('sine',160,t,.3,1,{sweep:45});osc('triangle',120,t,.12,.5,{sweep:60});noise(t,.03,.4,'lowpass',2500)}},
+ {id:'sizzle',nm:'Sizzle',pack:'Beats',c:'#fef08a',hat:'prop',eye:'happy',p:P('..x...x...x...x.'),fn:(t)=>noise(t,.22,.32,'highpass',7000)},
+ {id:'trap',nm:'Trap Hat',pack:'Beats',c:'#a78bfa',hat:'phones',eye:'sleepy',p:P('x.xxx.xxx.x.xxxx'),fn:(t,s)=>noise(t,.035,s%2?.2:.38,'highpass',8500)},
+ {id:'toms',nm:'Toms',pack:'Beats',c:'#b45309',hat:'cowboy',eye:'wide',p:P('..........x.xxx.'),notes:[12,7,3,0],fn:(t,s,n)=>{osc('sine',hz(n,110),t,.3,.8,{sweep:hz(n,110)*.6});osc('triangle',hz(n,220),t,.12,.3);noise(t,.02,.3,'bandpass',1800)}},
+ {id:'conga',nm:'Conga',pack:'Beats',c:'#d97706',hat:'bow',eye:'happy',p:P('x..x..x.x..x..x.'),notes:[14,19,19,14,12,19,14,17],fn:(t,s,n)=>{osc('sine',hz(n,220),t,.2,.7,{sweep:hz(n,220)*.75});noise(t,.015,.25,'bandpass',2500)}},
+ {id:'tambo',nm:'Tambo',pack:'Beats',c:'#f472b6',hat:'crown',eye:'happy',p:P('....x.x.....x.x.'),fn:(t)=>{noise(t,.14,.35,'highpass',9000);noise(t,.07,.25,'bandpass',5500,2)}},
+ {id:'crash',nm:'Crash',pack:'Beats',c:'#e2e8f0',hat:'spikes',eye:'wide',ev:4,p:P('x...............'),fn:(t)=>{noise(t,1,.45,'highpass',4000);noise(t,.5,.25,'bandpass',7000,.8)}},
+ {id:'roll',nm:'Build-up',pack:'Beats',c:'#0ea5e9',hat:'hood',eye:'flat',p:P('xxxxxxxxxxxxxxxx'),fn:(t,s)=>noise(t,.07,.12+.1*(Math.floor(step/16)%4)+(s%4===0?.1:0),'bandpass',2000,.9)}
 ];
 // ---------- characters ----------
 const HATS={
@@ -255,7 +263,7 @@ function tick(){
     const spb=60/bpm/4;
     while(nextT<ctx.currentTime+.12){
       const st=step%16,t=nextT;
-      slots.forEach((s,i)=>{if(s&&s.p[st]){const n=s.notes?s.notes[(Math.floor(step/ (s.p.filter(Boolean).length>6?1:1)))%s.notes.length]:0;
+      slots.forEach((s,i)=>{if(s&&s.p[st]&&(!s.ev||Math.floor(step/16)%s.ev===0)){const n=s.notes?s.notes[(Math.floor(step/ (s.p.filter(Boolean).length>6?1:1)))%s.notes.length]:0;
         const hitN=s.notes?(s.bar?s.notes[Math.floor(step/16)%s.notes.length]:s.notes[(hitCount[i]++)%s.notes.length]):0;s.fn(t,st,hitN);
         setTimeout(()=>flash(i,st),Math.max(0,(t-ctx.currentTime)*1000))}});
       setTimeout(()=>{const dots=stepsEl.children;for(let k=0;k<16;k++)dots[k].classList.toggle('on',k===st)},Math.max(0,(t-ctx.currentTime)*1000));
